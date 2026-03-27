@@ -7,18 +7,22 @@
 
 import Foundation
 
-/// Domain entity used by the UI.
 struct Stock: Identifiable, Hashable {
     let symbol: String
     let name: String
     let shortName: String?
-
-    let priceText: String?
-    let previousCloseText: String?
-
-    let changePercentValue: Double?
-    let changePercentText: String?
-
+    
+    // Price fields
+    let priceText: String?           // Current Price (formatted)
+    let previousCloseText: String?   // Previous Close (formatted)
+    
+    // Change fields
+    let changeValue: Double?         // Absolute change (e.g. -44.66)
+    let changeText: String?          // Formatted absolute change (e.g. "-44.66")
+    
+    let changePercentValue: Double?  // Percentage change (e.g. -0.69)
+    let changePercentText: String?   // Formatted percentage (e.g. "-0.69%")
+    
     // Detail screen fields
     let fullExchangeName: String
     let region: String?
@@ -27,7 +31,6 @@ struct Stock: Identifiable, Hashable {
     let tradeable: Bool?
     let priceHint: Int?
     let sourceInterval: Int?
-
+    
     var id: String { symbol }
 }
-

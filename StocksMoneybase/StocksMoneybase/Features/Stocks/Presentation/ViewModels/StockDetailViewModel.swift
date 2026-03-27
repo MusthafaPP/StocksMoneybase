@@ -31,3 +31,5 @@ final class StockDetailViewModel: ObservableObject {
         }
     }
 }
+
+

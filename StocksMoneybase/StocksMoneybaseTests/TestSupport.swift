@@ -5,15 +5,6 @@ enum MockError: Error {
     case someFailure
 }
 
-//struct InvalidEndpoint: APIEndpoint {
-//    typealias Response = MarketSummaryResponse
-//    let baseURL = ":// bad url"
-//    let path = "/x"
-//    let method: HTTPMethod = .get
-//    let queryItems: [URLQueryItem]? = nil
-//    let headers: [String: String]? = nil
-//}
-
 struct InvalidEndpoint: APIEndpoint {
     typealias Response = StocksResponse
 
@@ -24,7 +15,11 @@ struct InvalidEndpoint: APIEndpoint {
     var headers: [String: String]? { nil }
 }
 
-final class MarketSummaryDataSourceMock: DataSource {
+final class StocksDataSourceMock: DataSource {
+    func fetchData<E>(apiEndpoint: E) async throws -> E.Response where E : StocksMoneybase.APIEndpoint {
+        <#code#>
+    }
+
     private let result: Result<StocksResponse, Error>
     private(set) var callCount = 0
 

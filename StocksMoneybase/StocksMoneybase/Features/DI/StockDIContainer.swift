@@ -13,7 +13,7 @@ final class MarketSummaryDIContainer {
         let repository = StocksRepositoryImpl(dataSource: remote)
         let useCase = StocksUseCaseImpl(repository: repository)
         let viewModel = MarketSummaryListViewModel(useCase: useCase)
-        return MarketSummaryListView(viewModel: viewModel)
+        return StockListView(viewModel: viewModel)
     }
     
     static func makeMarketSummaryDetailView(stock: Stock) -> some View {

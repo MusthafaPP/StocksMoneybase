@@ -7,7 +7,7 @@ struct RepositoryAndUseCaseTests {
     @Test("Repository maps response result")
     func repositoryReturnsResultFromResponse() async throws {
         let item = makeItem(symbol: "SPY", shortName: "SPDR")
-        let dataSource = MarketSummaryDataSourceMock(result: .success(StocksResponse(
+        let dataSource = StocksDataSourceMock(result: .success(StocksResponse(
             marketSummary: StocksSummary(result: [item], error: nil)
         )))
         let repository = StocksRepositoryImpl(dataSource: dataSource)
@@ -21,7 +21,7 @@ struct RepositoryAndUseCaseTests {
 
     @Test("Repository propagates data source error")
     func repositoryPropagatesError() async {
-        let dataSource = MarketSummaryDataSourceMock(result: .failure(MockError.someFailure))
+        let dataSource = StocksDataSourceMock(result: .failure(MockError.someFailure))
         let repository = StocksRepositoryImpl(dataSource: dataSource)
 
         await #expect(throws: Error.self) {
