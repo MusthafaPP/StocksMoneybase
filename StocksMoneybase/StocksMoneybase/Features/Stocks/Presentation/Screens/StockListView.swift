@@ -12,11 +12,20 @@ struct MarketSummaryListView: View {
     @StateObject var viewModel: MarketSummaryListViewModel
     
     var body: some View {
-        NavigationView {
-            List(viewModel.marketSummaries) { marketSummary in
-                MarketSummaryRowView(marketSummary: marketSummary)
+        NavigationStack {
+            List(viewModel.filteredMarketSummaries) { marketSummary in
+                NavigationLink {
+                    MarketSummaryDIContainer.makeMarketSummaryDetailView(marketSummary: marketSummary)
+                } label: {
+                    MarketSummaryRowView(marketSummary: marketSummary)
+                }
             }
             .navigationTitle("Market Summary")
+            .searchable(
+                text: $viewModel.searchText,
+                placement: .navigationBarDrawer(displayMode: .always),
+                prompt: "Search by stock name"
+            )
             .overlay {
                 if viewModel.isLoading {
                     ProgressView()

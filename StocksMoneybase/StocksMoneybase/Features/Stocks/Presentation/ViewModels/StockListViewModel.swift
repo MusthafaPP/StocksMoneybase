@@ -12,12 +12,23 @@ import Combine
 final class MarketSummaryListViewModel: ObservableObject {
     
     @Published var marketSummaries: [MarketSummaryItem] = []
+    @Published var searchText = ""
     @Published var isLoading = false
     
     private let useCase: GetMarketSummaryUseCase
     
     init(useCase: GetMarketSummaryUseCase) {
         self.useCase = useCase
+    }
+
+    var filteredMarketSummaries: [MarketSummaryItem] {
+        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else { return marketSummaries }
+
+        return marketSummaries.filter { item in
+            let displayName = item.shortName ?? item.fullExchangeName
+            return displayName.localizedCaseInsensitiveContains(query)
+        }
     }
     
     func loadMarketSummaries() async {
