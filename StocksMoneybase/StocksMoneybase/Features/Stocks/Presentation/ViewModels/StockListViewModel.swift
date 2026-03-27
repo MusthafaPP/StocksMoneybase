@@ -11,7 +11,7 @@ import SwiftUI
 import Combine
 
 @MainActor
-final class MarketSummaryListViewModel: ObservableObject {
+final class StockListViewModel: ObservableObject {
     
     @Published var stocks: [Stock] = []
     @Published var searchText = ""

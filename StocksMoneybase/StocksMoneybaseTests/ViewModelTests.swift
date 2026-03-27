@@ -8,7 +8,7 @@ struct ViewModelTests {
     @MainActor
     func listViewModelEmptySearch() {
         let useCase = GetMarketSummaryUseCaseMock(result: .success([]))
-        let viewModel = MarketSummaryListViewModel(useCase: useCase)
+        let viewModel = StockListViewModel(useCase: useCase)
         viewModel.stocks = [makeStock(symbol: "AAPL", shortName: "Apple")]
         viewModel.searchText = "   "
 
@@ -19,7 +19,7 @@ struct ViewModelTests {
     @MainActor
     func listViewModelFiltersByShortName() {
         let useCase = GetMarketSummaryUseCaseMock(result: .success([]))
-        let viewModel = MarketSummaryListViewModel(useCase: useCase)
+        let viewModel = StockListViewModel(useCase: useCase)
         viewModel.stocks = [
             makeStock(symbol: "AAPL", shortName: "Apple Inc."),
             makeStock(symbol: "MSFT", shortName: "Microsoft")
@@ -34,7 +34,7 @@ struct ViewModelTests {
     @MainActor
     func listViewModelFiltersByExchangeNameFallback() {
         let useCase = GetMarketSummaryUseCaseMock(result: .success([]))
-        let viewModel = MarketSummaryListViewModel(useCase: useCase)
+        let viewModel = StockListViewModel(useCase: useCase)
         viewModel.stocks = [makeStock(symbol: "^DJI", shortName: nil, fullExchangeName: "Dow Jones")]
         viewModel.searchText = "dow"
 
@@ -46,7 +46,7 @@ struct ViewModelTests {
     func listViewModelLoadSuccess() async {
         let stocks = [makeStock(symbol: "NVDA", shortName: "NVIDIA")]
         let useCase = GetMarketSummaryUseCaseMock(result: .success(stocks))
-        let viewModel = MarketSummaryListViewModel(useCase: useCase)
+        let viewModel = StockListViewModel(useCase: useCase)
 
         await viewModel.loadMarketSummaries()
 
@@ -60,7 +60,7 @@ struct ViewModelTests {
     @MainActor
     func listViewModelLoadFailure() async {
         let useCase = GetMarketSummaryUseCaseMock(result: .failure(MockError.someFailure))
-        let viewModel = MarketSummaryListViewModel(useCase: useCase)
+        let viewModel = StockListViewModel(useCase: useCase)
 
         await viewModel.loadMarketSummaries()
 

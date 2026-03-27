@@ -9,7 +9,7 @@ import SwiftUI
 
 struct StockListView: View {
     
-    @StateObject var viewModel: MarketSummaryListViewModel
+    @StateObject var viewModel: StockListViewModel
     
     var body: some View {
         NavigationStack {
@@ -31,7 +31,7 @@ struct StockListView: View {
             )
             .toolbar {
                 Menu {
-                    ForEach(MarketSummaryListViewModel.SortOption.allCases) { option in
+                    ForEach(StockListViewModel.SortOption.allCases) { option in
                         Button {
                             viewModel.sortOption = option
                         } label: {
