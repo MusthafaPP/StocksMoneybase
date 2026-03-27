@@ -8,22 +8,24 @@
 import SwiftUI
 final class MarketSummaryDIContainer {
     static func makeMarketSummaryListView() -> some View {
-        let remote = MarketSummaryRemoteDataSourceImp()
-        let repository = MarketSummaryRepositoryImp(dataSource: remote)
-        let useCase = GetMarketSummaryUseCaseImp(repository: repository)
+        let apiService = APIService()
+        let remote = RemoteDataSourceImpl(service: apiService)
+        let repository = StocksRepositoryImpl(dataSource: remote)
+        let useCase = StocksUseCaseImpl(repository: repository)
         let viewModel = MarketSummaryListViewModel(useCase: useCase)
         return MarketSummaryListView(viewModel: viewModel)
     }
     
-    static func makeMarketSummaryDetailView(marketSummary: MarketSummaryItem) -> some View {
-        let remote = MarketSummaryRemoteDataSourceImp()
-        let repository = MarketSummaryRepositoryImp(dataSource: remote)
-        let useCase = GetMarketSummaryUseCaseImp(repository: repository)
-        let viewModel = MarketSummaryDetailViewModel(
-            symbol: marketSummary.symbol,
-            initialName: marketSummary.shortName ?? marketSummary.fullExchangeName,
+    static func makeMarketSummaryDetailView(stock: Stock) -> some View {
+        let apiService = APIService()
+        let remote = RemoteDataSourceImpl(service: apiService)
+        let repository = StockDetailsRepositoryImpl(dataSource: remote)
+        let useCase = StockDetailsUseCaseImpl(repository: repository)
+        let viewModel = StockDetailViewModel(
+            symbol: stock.symbol,
+            initialName: stock.name,
             useCase: useCase
         )
-        return MarketSummaryDetailView(viewModel: viewModel)
+        return StockDetailView(viewModel: viewModel)
     }
 }

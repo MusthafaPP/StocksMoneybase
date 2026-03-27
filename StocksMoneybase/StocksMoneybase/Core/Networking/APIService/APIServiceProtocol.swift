@@ -18,7 +18,7 @@ extension APIServiceProtocol {
     }
 }
 
-final class MarketSummaryService: APIServiceProtocol {
+final class APIService: APIServiceProtocol {
     let client: NetworkClient
     init(client: NetworkClient = URLSessionClient()) {
         self.client = client

@@ -8,7 +8,7 @@ struct URLRequestBuilderTests {
     @Test("Builds URLRequest with method, headers, and query")
     func buildRequestSuccess() throws {
         let builder = URLRequestBuilder()
-        let endpoint = ChartEndpoint(symbol: "TSLA")
+        let endpoint = StockDetailsEndpoint(symbol: "TSLA")
 
         let request = try builder.buildRequest(from: endpoint)
 

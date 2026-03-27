@@ -27,6 +27,11 @@ final class URLSessionClient: NetworkClient {
         
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
+            if let dataString = String(data: data, encoding: .utf8) {
+                print(dataString)
+            } else {
+                print("Failed to convert data to string")
+            }
             
             guard let httpResponse = response as? HTTPURLResponse else {
                 throw NetworkError.invalidResponse

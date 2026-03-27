@@ -6,6 +6,7 @@
 //
 
 
-protocol MarketSummaryRepository {
-    func fetchMarketSummary() async throws -> [MarketSummaryItem]
+protocol StocksRepository {
+    func fetchMarketSummary() async throws -> [Stock]
 }
+

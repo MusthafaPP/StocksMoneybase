@@ -1,13 +1,6 @@
-//
-//  ChartResponse.swift
-//  StocksMoneybase
-//
-//  Created by Muhammed Musthafa on 27/03/2026.
-//
-
-
-import Foundation
-
+//import Foundation
+//import Foundation
+// MARK: - API Response Models
 
 struct ChartResponse: Decodable {
     let chart: ChartData
@@ -23,6 +16,8 @@ struct ChartResult: Decodable {
     let timestamp: [Int]?
     let indicators: Indicators
 }
+
+// MARK: - Chart Meta
 
 struct ChartMeta: Decodable {
     let currency: String
@@ -42,18 +37,20 @@ struct ChartMeta: Decodable {
     let regularMarketDayHigh: Double
     let regularMarketDayLow: Double
     let regularMarketVolume: Int
-    let longName: String
-    let shortName: String
+    let longName: String?
+    let shortName: String?
     let chartPreviousClose: Double
     let previousClose: Double
     let scale: Int
     let priceHint: Int
-    let currentTradingPeriod: TradingPeriodData
+    let currentTradingPeriod: TradingPeriodData?
     let tradingPeriods: TradingPeriods
     let dataGranularity: String
     let range: String
     let validRanges: [String]
 }
+
+// MARK: - Trading Periods
 
 struct TradingPeriodData: Decodable {
     let pre: TradingPeriod
@@ -63,8 +60,8 @@ struct TradingPeriodData: Decodable {
 
 struct TradingPeriod: Decodable {
     let timezone: String
-    let end: Int
     let start: Int
+    let end: Int
     let gmtoffset: Int
 }
 
@@ -73,6 +70,8 @@ struct TradingPeriods: Decodable {
     let regular: [[TradingPeriod]]
     let post: [[TradingPeriod]]
 }
+
+// MARK: - Indicators
 
 struct Indicators: Decodable {
     let quote: [Quote]
@@ -85,3 +84,4 @@ struct Quote: Decodable {
     let low: [Double?]?
     let volume: [Double?]?
 }
+

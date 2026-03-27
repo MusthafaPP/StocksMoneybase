@@ -15,7 +15,7 @@ enum MockError: Error {
 //}
 
 struct InvalidEndpoint: APIEndpoint {
-    typealias Response = MarketSummaryResponse
+    typealias Response = StocksResponse
 
     var baseURL: String { "ht tp://invalid-url" } // space breaks it
     var path: String { "" }
@@ -24,43 +24,43 @@ struct InvalidEndpoint: APIEndpoint {
     var headers: [String: String]? { nil }
 }
 
-final class MarketSummaryDataSourceMock: MarketSummaryDataSource {
-    private let result: Result<MarketSummaryResponse, Error>
+final class MarketSummaryDataSourceMock: DataSource {
+    private let result: Result<StocksResponse, Error>
     private(set) var callCount = 0
 
-    init(result: Result<MarketSummaryResponse, Error>) {
+    init(result: Result<StocksResponse, Error>) {
         self.result = result
     }
 
-    func fetchMarketSummary() async throws -> MarketSummaryResponse {
+    func fetchMarketSummary() async throws -> StocksResponse {
         callCount += 1
         return try result.get()
     }
 }
 
-final class MarketSummaryRepositoryMock: MarketSummaryRepository {
-    private let result: Result<[MarketSummaryItem], Error>
+final class MarketSummaryRepositoryMock: StocksRepository {
+    private let result: Result<[Stock], Error>
     private(set) var callCount = 0
 
-    init(result: Result<[MarketSummaryItem], Error>) {
+    init(result: Result<[Stock], Error>) {
         self.result = result
     }
 
-    func fetchMarketSummary() async throws -> [MarketSummaryItem] {
+    func fetchMarketSummary() async throws -> [Stock] {
         callCount += 1
         return try result.get()
     }
 }
 
-final class GetMarketSummaryUseCaseMock: GetMarketSummaryUseCase {
-    private let result: Result<[MarketSummaryItem], Error>
+final class GetMarketSummaryUseCaseMock: StocksUseCase {
+    private let result: Result<[Stock], Error>
     private(set) var callCount = 0
 
-    init(result: Result<[MarketSummaryItem], Error>) {
+    init(result: Result<[Stock], Error>) {
         self.result = result
     }
 
-    func execute() async throws -> [MarketSummaryItem] {
+    func execute() async throws -> [Stock] {
         callCount += 1
         return try result.get()
     }
@@ -70,8 +70,8 @@ func makeItem(
     symbol: String,
     shortName: String?,
     fullExchangeName: String = "NasdaqGS"
-) -> MarketSummaryItem {
-    MarketSummaryItem(
+) -> Stock {
+    Stock(
         fullExchangeName: fullExchangeName,
         symbol: symbol,
         gmtOffSetMilliseconds: nil,
@@ -81,6 +81,7 @@ func makeItem(
         spark: nil,
         tradeable: nil,
         regularMarketPreviousClose: nil,
+        regularMarketChangePercent: nil,
         exchangeTimezoneName: nil,
         cryptoTradeable: nil,
         exchangeDataDelayedBy: nil,
@@ -98,4 +99,50 @@ func makeItem(
         region: nil,
         triggerable: nil
     )
+}
+
+func makeItemWithChangePercent(
+    symbol: String,
+    shortName: String?,
+    changeRaw: Double?,
+    changeFmt: String?,
+    fullExchangeName: String = "NasdaqGS"
+) -> Stock {
+    let change = MarketChangePercent(raw: changeRaw, fmt: changeFmt)
+    return Stock(
+        fullExchangeName: fullExchangeName,
+        symbol: symbol,
+        gmtOffSetMilliseconds: nil,
+        language: nil,
+        regularMarketTime: nil,
+        quoteType: nil,
+        spark: nil,
+        tradeable: nil,
+        regularMarketPreviousClose: nil,
+        regularMarketChangePercent: change,
+        exchangeTimezoneName: nil,
+        cryptoTradeable: nil,
+        exchangeDataDelayedBy: nil,
+        firstTradeDateMilliseconds: nil,
+        exchangeTimezoneShortName: nil,
+        hasPrePostMarketData: nil,
+        customPriceAlertConfidence: nil,
+        regularMarketPrice: nil,
+        marketState: nil,
+        market: nil,
+        priceHint: nil,
+        exchange: nil,
+        sourceInterval: nil,
+        shortName: shortName,
+        region: nil,
+        triggerable: nil
+    )
+}
+
+func makeStock(
+    symbol: String,
+    shortName: String?,
+    fullExchangeName: String = "NasdaqGS"
+) -> Stock {
+    StockMapper.mapToStock(makeItem(symbol: symbol, shortName: shortName, fullExchangeName: fullExchangeName))
 }

@@ -15,6 +15,7 @@ struct DecodingTests {
                 "fullExchangeName": "NasdaqGS",
                 "symbol": "^IXIC",
                 "regularMarketPrice": { "raw": 17000.25, "fmt": "17,000.25" },
+                "regularMarketChangePercent": { "raw": 1.23, "fmt": "1.23%" },
                 "shortName": "NASDAQ",
                 "spark": {
                   "timestamp": [1,2],
@@ -34,12 +35,48 @@ struct DecodingTests {
         """
 
         let data = try #require(json.data(using: .utf8))
-        let decoded = try JSONDecoder().decode(MarketSummaryResponse.self, from: data)
+        let decoded = try JSONDecoder().decode(StocksResponse.self, from: data)
 
         #expect(decoded.marketSummary.error == nil)
         #expect(decoded.marketSummary.result.count == 1)
         #expect(decoded.marketSummary.result[0].symbol == "^IXIC")
         #expect(decoded.marketSummary.result[0].regularMarketPrice?.fmt == "17,000.25")
+        #expect(decoded.marketSummary.result[0].regularMarketChangePercent?.raw == 1.23)
+    }
+
+    @Test("Decodes regularMarketChangePercent numeric fallback")
+    func decodeRegularMarketChangePercentNumeric() throws {
+        let json = """
+        {
+          "marketSummaryAndSparkResponse": {
+            "result": [
+              {
+                "fullExchangeName": "NasdaqGS",
+                "symbol": "^IXIC",
+                "regularMarketPrice": { "raw": 17000.25, "fmt": "17,000.25" },
+                "regularMarketChangePercent": 4.5,
+                "shortName": "NASDAQ",
+                "spark": {
+                  "timestamp": [1,2],
+                  "end": 2,
+                  "symbol": "^IXIC",
+                  "close": [17000.0,17000.25],
+                  "dataGranularity": 5,
+                  "previousClose": 16900.0,
+                  "chartPreviousClose": 16900.0,
+                  "start": 1
+                }
+              }
+            ],
+            "error": null
+          }
+        }
+        """
+
+        let data = try #require(json.data(using: .utf8))
+        let decoded = try JSONDecoder().decode(StocksResponse.self, from: data)
+
+        #expect(decoded.marketSummary.result[0].regularMarketChangePercent?.raw == 4.5)
     }
 
     @Test("Decodes ChartResponse JSON payload")

@@ -1,17 +1,17 @@
 import SwiftUI
 import Combine
 @MainActor
-final class MarketSummaryDetailViewModel: ObservableObject {
-    @Published var detail: MarketSummaryItem?
+final class StockDetailViewModel: ObservableObject {
+    @Published var detail: StockDetails?       // ✅ Changed from Stock
     @Published var isLoading = false
     @Published var errorMessage: String?
     
     let symbol: String
     let initialName: String
     
-    private let useCase: GetMarketSummaryUseCase
+    private let useCase: StockDetailsUseCase   // Make sure this returns StockDetails
     
-    init(symbol: String, initialName: String, useCase: GetMarketSummaryUseCase) {
+    init(symbol: String, initialName: String, useCase: StockDetailsUseCase) {
         self.symbol = symbol
         self.initialName = initialName
         self.useCase = useCase
@@ -23,11 +23,9 @@ final class MarketSummaryDetailViewModel: ObservableObject {
         defer { isLoading = false }
         
         do {
-            let summaries = try await useCase.execute()
-            detail = summaries.first(where: { $0.symbol == symbol })
-            if detail == nil {
-                errorMessage = "Unable to find stock details for \(symbol)."
-            }
+            let stockDetails = try await useCase.execute(symbol: symbol)
+            // Since StockDetailsRepository returns a single StockDetails now:
+            detail = stockDetails
         } catch {
             errorMessage = "Unable to load stock details. Pull to retry."
         }

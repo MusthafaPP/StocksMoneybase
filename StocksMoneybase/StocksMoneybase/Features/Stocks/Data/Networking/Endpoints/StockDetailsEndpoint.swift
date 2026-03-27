@@ -1,19 +1,11 @@
-//
-//  ChartEndpoint.swift
-//  StocksMoneybase
-//
-//  Created by Muhammed Musthafa on 27/03/2026.
-//
-
 import Foundation
 
-
-struct ChartEndpoint: APIEndpoint {
+struct StockDetailsEndpoint: APIEndpoint {
     typealias Response = ChartResponse
-    
+
     let symbol: String
-    
-    var baseURL: String { "https://yh-finance.p.rapidapi.com" }
+
+    var baseURL: String { NetworkConfigProvider.shared.baseURL }
     var path: String { "/stock/v2/get-chart" }
     var method: HTTPMethod { .get }
     var queryItems: [URLQueryItem]? {
@@ -24,13 +16,16 @@ struct ChartEndpoint: APIEndpoint {
             URLQueryItem(name: "region", value: "US")
         ]
     }
-    var headers: [String : String]? {
-        [
+
+    var headers: [String: String]? {
+        var headers: [String: String] = [
             "Content-Type": "application/json",
-            "x-rapidapi-host": "yh-finance.p.rapidapi.com",
-            "x-rapidapi-key": "501a9ce445msh7a4209530a3dd9dp1dcc1djsn116323932be5"
+            "x-rapidapi-host": NetworkConfigProvider.shared.rapidAPIHost
         ]
+        if let key = NetworkConfigProvider.shared.rapidAPIKey {
+            headers["x-rapidapi-key"] = key
+        }
+        return headers
     }
 }
-
 

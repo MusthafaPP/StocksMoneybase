@@ -11,23 +11,22 @@ import Combine
 @MainActor
 final class MarketSummaryListViewModel: ObservableObject {
     
-    @Published var marketSummaries: [MarketSummaryItem] = []
+    @Published var stocks: [Stock] = []
     @Published var searchText = ""
     @Published var isLoading = false
     
-    private let useCase: GetMarketSummaryUseCase
+    private let useCase: StocksUseCase
     
-    init(useCase: GetMarketSummaryUseCase) {
+    init(useCase: StocksUseCase) {
         self.useCase = useCase
     }
 
-    var filteredMarketSummaries: [MarketSummaryItem] {
+    var filteredStocks: [Stock] {
         let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !query.isEmpty else { return marketSummaries }
+        guard !query.isEmpty else { return stocks }
 
-        return marketSummaries.filter { item in
-            let displayName = item.shortName ?? item.fullExchangeName
-            return displayName.localizedCaseInsensitiveContains(query)
+        return stocks.filter { stock in
+            stock.name.localizedCaseInsensitiveContains(query)
         }
     }
     
@@ -36,7 +35,7 @@ final class MarketSummaryListViewModel: ObservableObject {
         defer { isLoading = false }
         
         do {
-            marketSummaries = try await useCase.execute()
+            stocks = try await useCase.execute()
         } catch {
             print("Error:", error)
         }

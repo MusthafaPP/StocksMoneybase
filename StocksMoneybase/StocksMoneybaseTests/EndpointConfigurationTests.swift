@@ -7,7 +7,7 @@ struct EndpointConfigurationTests {
 
     @Test("MarketSummaryEndpoint has expected defaults")
     func marketSummaryEndpointDefaults() {
-        let endpoint = MarketSummaryEndpoint()
+        let endpoint = StocksEndpoint()
         #expect(endpoint.baseURL == "https://yh-finance.p.rapidapi.com")
         #expect(endpoint.path == "/market/v2/get-summary")
         #expect(endpoint.method == .get)
@@ -18,7 +18,7 @@ struct EndpointConfigurationTests {
 
     @Test("ChartEndpoint uses symbol and expected query values")
     func chartEndpointUsesSymbol() {
-        let endpoint = ChartEndpoint(symbol: "AAPL")
+        let endpoint = StockDetailsEndpoint(symbol: "AAPL")
         #expect(endpoint.path == "/stock/v2/get-chart")
         #expect(endpoint.method == .get)
         #expect(endpoint.queryItems?.first(where: { $0.name == "symbol" })?.value == "AAPL")

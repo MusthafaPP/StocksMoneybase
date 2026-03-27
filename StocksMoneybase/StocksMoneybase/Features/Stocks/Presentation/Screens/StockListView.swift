@@ -13,14 +13,14 @@ struct MarketSummaryListView: View {
     
     var body: some View {
         NavigationStack {
-            List(viewModel.filteredMarketSummaries) { marketSummary in
+            List(viewModel.filteredStocks) { stock in
                 NavigationLink {
-                    MarketSummaryDIContainer.makeMarketSummaryDetailView(marketSummary: marketSummary)
+                    MarketSummaryDIContainer.makeMarketSummaryDetailView(stock: stock)
                 } label: {
-                    MarketSummaryRowView(marketSummary: marketSummary)
+                    StockRowView(stock: stock)
                 }
             }
-            .navigationTitle("Market Summary")
+            .navigationTitle("Stocks")
             .searchable(
                 text: $viewModel.searchText,
                 placement: .navigationBarDrawer(displayMode: .always),

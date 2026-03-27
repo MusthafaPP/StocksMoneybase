@@ -7,29 +7,41 @@
 
 import SwiftUI
 
-struct MarketSummaryRowView: View {
-    
-    let marketSummary: MarketSummaryItem
+struct StockRowView: View {
+    let stock: Stock
     
     var body: some View {
         HStack {
             
             VStack(alignment: .leading) {
-                Text(marketSummary.shortName ?? marketSummary.fullExchangeName)
-                    .font(.headline)
+                Text(stock.name)
+                    .font(AppFonts.headline)
                 
-                Text(marketSummary.symbol)
-                    .font(.caption)
-                    .foregroundColor(.gray)
+                Text(stock.symbol)
+                    .font(AppFonts.caption)
+                    .foregroundColor(AppColors.mutedText)
             }
             
             Spacer()
             
             VStack(alignment: .trailing) {
-                Text(marketSummary.regularMarketPrice?.fmt ?? "-")
-                    .font(.headline)
+                Text(stock.priceText ?? "-")
+                    .font(AppFonts.headline)
+
+                if let changeText = stock.changePercentText {
+                    Text(changeText)
+                        .font(AppFonts.caption)
+                        .foregroundColor(changeColor)
+                }
             }
         }
         .padding(.vertical, 6)
+    }
+
+    private var changeColor: Color {
+        guard let value = stock.changePercentValue else { return AppColors.secondaryText }
+        if value > 0 { return AppColors.positive }
+        if value < 0 { return AppColors.negative }
+        return AppColors.secondaryText
     }
 }

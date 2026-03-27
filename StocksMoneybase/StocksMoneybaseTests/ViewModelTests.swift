@@ -9,10 +9,10 @@ struct ViewModelTests {
     func listViewModelEmptySearch() {
         let useCase = GetMarketSummaryUseCaseMock(result: .success([]))
         let viewModel = MarketSummaryListViewModel(useCase: useCase)
-        viewModel.marketSummaries = [makeItem(symbol: "AAPL", shortName: "Apple")]
+        viewModel.stocks = [makeStock(symbol: "AAPL", shortName: "Apple")]
         viewModel.searchText = "   "
 
-        #expect(viewModel.filteredMarketSummaries.count == 1)
+        #expect(viewModel.filteredStocks.count == 1)
     }
 
     @Test("List view model filters by shortName case-insensitively")
@@ -20,14 +20,14 @@ struct ViewModelTests {
     func listViewModelFiltersByShortName() {
         let useCase = GetMarketSummaryUseCaseMock(result: .success([]))
         let viewModel = MarketSummaryListViewModel(useCase: useCase)
-        viewModel.marketSummaries = [
-            makeItem(symbol: "AAPL", shortName: "Apple Inc."),
-            makeItem(symbol: "MSFT", shortName: "Microsoft")
+        viewModel.stocks = [
+            makeStock(symbol: "AAPL", shortName: "Apple Inc."),
+            makeStock(symbol: "MSFT", shortName: "Microsoft")
         ]
         viewModel.searchText = "apple"
 
-        #expect(viewModel.filteredMarketSummaries.count == 1)
-        #expect(viewModel.filteredMarketSummaries.first?.symbol == "AAPL")
+        #expect(viewModel.filteredStocks.count == 1)
+        #expect(viewModel.filteredStocks.first?.symbol == "AAPL")
     }
 
     @Test("List view model filters by exchange name when shortName is nil")
@@ -35,24 +35,24 @@ struct ViewModelTests {
     func listViewModelFiltersByExchangeNameFallback() {
         let useCase = GetMarketSummaryUseCaseMock(result: .success([]))
         let viewModel = MarketSummaryListViewModel(useCase: useCase)
-        viewModel.marketSummaries = [makeItem(symbol: "^DJI", shortName: nil, fullExchangeName: "Dow Jones")]
+        viewModel.stocks = [makeStock(symbol: "^DJI", shortName: nil, fullExchangeName: "Dow Jones")]
         viewModel.searchText = "dow"
 
-        #expect(viewModel.filteredMarketSummaries.count == 1)
+        #expect(viewModel.filteredStocks.count == 1)
     }
 
     @Test("List view model loads summaries successfully")
     @MainActor
     func listViewModelLoadSuccess() async {
-        let items = [makeItem(symbol: "NVDA", shortName: "NVIDIA")]
-        let useCase = GetMarketSummaryUseCaseMock(result: .success(items))
+        let stocks = [makeStock(symbol: "NVDA", shortName: "NVIDIA")]
+        let useCase = GetMarketSummaryUseCaseMock(result: .success(stocks))
         let viewModel = MarketSummaryListViewModel(useCase: useCase)
 
         await viewModel.loadMarketSummaries()
 
         #expect(viewModel.isLoading == false)
-        #expect(viewModel.marketSummaries.count == 1)
-        #expect(viewModel.marketSummaries.first?.symbol == "NVDA")
+        #expect(viewModel.stocks.count == 1)
+        #expect(viewModel.stocks.first?.symbol == "NVDA")
         #expect(useCase.callCount == 1)
     }
 
@@ -65,19 +65,19 @@ struct ViewModelTests {
         await viewModel.loadMarketSummaries()
 
         #expect(viewModel.isLoading == false)
-        #expect(viewModel.marketSummaries.isEmpty)
+        #expect(viewModel.stocks.isEmpty)
         #expect(useCase.callCount == 1)
     }
 
     @Test("Detail view model loads matching symbol")
     @MainActor
     func detailViewModelLoadSuccess() async {
-        let items = [
-            makeItem(symbol: "AAPL", shortName: "Apple"),
-            makeItem(symbol: "MSFT", shortName: "Microsoft")
+        let stocks = [
+            makeStock(symbol: "AAPL", shortName: "Apple"),
+            makeStock(symbol: "MSFT", shortName: "Microsoft")
         ]
-        let useCase = GetMarketSummaryUseCaseMock(result: .success(items))
-        let viewModel = MarketSummaryDetailViewModel(symbol: "MSFT", initialName: "Microsoft", useCase: useCase)
+        let useCase = GetMarketSummaryUseCaseMock(result: .success(stocks))
+        let viewModel = StockDetailViewModel(symbol: "MSFT", initialName: "Microsoft", useCase: useCase)
 
         await viewModel.loadDetail()
 
@@ -90,8 +90,8 @@ struct ViewModelTests {
     @Test("Detail view model sets not found message when symbol missing")
     @MainActor
     func detailViewModelSymbolNotFound() async {
-        let useCase = GetMarketSummaryUseCaseMock(result: .success([makeItem(symbol: "TSLA", shortName: "Tesla")]))
-        let viewModel = MarketSummaryDetailViewModel(symbol: "META", initialName: "Meta", useCase: useCase)
+        let useCase = GetMarketSummaryUseCaseMock(result: .success([makeStock(symbol: "TSLA", shortName: "Tesla")]))
+        let viewModel = StockDetailViewModel(symbol: "META", initialName: "Meta", useCase: useCase)
 
         await viewModel.loadDetail()
 
@@ -103,7 +103,7 @@ struct ViewModelTests {
     @MainActor
     func detailViewModelLoadFailure() async {
         let useCase = GetMarketSummaryUseCaseMock(result: .failure(MockError.someFailure))
-        let viewModel = MarketSummaryDetailViewModel(symbol: "AAPL", initialName: "Apple", useCase: useCase)
+        let viewModel = StockDetailViewModel(symbol: "AAPL", initialName: "Apple", useCase: useCase)
 
         await viewModel.loadDetail()
 
