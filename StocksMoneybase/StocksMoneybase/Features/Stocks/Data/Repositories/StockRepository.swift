@@ -1,0 +1,11 @@
+//
+//  StockRepository.swift
+//  StocksMoneybase
+//
+//  Created by Muhammed Musthafa on 26/03/2026.
+//
+
+
+protocol MarketSummaryRepository {
+    func fetchMarketSummary() async throws -> [MarketSummaryItem]
+}
