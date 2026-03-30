@@ -17,15 +17,14 @@ final class StockDetailsRepositoryImpl: StockDetailsRepository {
     }
 
     func fetchStockDetails(symbol: String) async throws -> StockDetails {
-        let response = try await dataSource.fetchData(
+        let response: ChartResponse = try await dataSource.fetchData(
             apiEndpoint: StockDetailsEndpoint(symbol: symbol)
         )
-        
-        // Safely unwrap the first result
-        guard let firstResult = response.chart.result.first else {
-            throw NSError(domain: "StockDetailsRepository", code: 404, userInfo: [NSLocalizedDescriptionKey: "No stock data found"])
+        // Assuming at least one result exists for the symbol; otherwise throw.
+        guard let first = response.chart.result.first else {
+            struct NoChartData: Error {}
+            throw NoChartData()
         }
-        
-        return StockDetailsMapper.mapToStock(from: firstResult)
+        return StockDetailsMapper.mapToStock(from: first)
     }
 }

@@ -14,8 +14,8 @@ final class StocksRepositoryImpl: StocksRepository {
     }
     
     func fetchMarketSummary() async throws -> [Stock] {
-        let response = try await dataSource.fetchData(
-            apiEndpoint: StocksEndpoint(),
+        let response: StocksResponse = try await dataSource.fetchData(
+            apiEndpoint: StocksEndpoint()
         )
         return response.marketSummary.result.map(StockMapper.mapToStock)
     }

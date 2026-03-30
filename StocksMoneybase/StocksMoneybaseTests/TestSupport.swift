@@ -163,6 +163,47 @@ func makeStockNoChange() -> Stock {
     )
 }
 
+// MARK: - StockItem Factory for API Response Tests
+
+func makeStockItem(
+    symbol: String,
+    shortName: String? = nil,
+    fullExchangeName: String = "NasdaqGS",
+    priceRaw: Double? = 150.25,
+    priceFmt: String? = "150.25",
+    previousCloseRaw: Double? = 148.75,
+    previousCloseFmt: String? = "148.75"
+) -> StockItem {
+    return StockItem(
+        fullExchangeName: fullExchangeName,
+        symbol: symbol,
+        gmtOffSetMilliseconds: nil,
+        language: nil,
+        regularMarketTime: nil,
+        quoteType: "EQUITY",
+        spark: nil,
+        tradeable: true,
+        regularMarketPreviousClose: RegularMarket(raw: previousCloseRaw, fmt: previousCloseFmt),
+        regularMarketChangePercent: nil,
+        exchangeTimezoneName: nil,
+        cryptoTradeable: nil,
+        exchangeDataDelayedBy: nil,
+        firstTradeDateMilliseconds: nil,
+        exchangeTimezoneShortName: nil,
+        hasPrePostMarketData: nil,
+        customPriceAlertConfidence: nil,
+        regularMarketPrice: RegularMarket(raw: priceRaw, fmt: priceFmt),
+        marketState: "REGULAR",
+        market: nil,
+        priceHint: 2,
+        exchange: nil,
+        sourceInterval: 15,
+        shortName: shortName,
+        region: "US",
+        triggerable: true
+    )
+}
+
 // MARK: - Legacy Helpers (Deprecated)
 
 func makeItem(
@@ -190,3 +231,4 @@ func makeStockLegacy(
 ) -> Stock {
     fatalError("makeStockLegacy is deprecated. Use makeStock() instead.")
 }
+

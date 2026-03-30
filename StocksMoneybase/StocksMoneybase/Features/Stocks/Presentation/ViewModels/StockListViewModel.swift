@@ -17,8 +17,10 @@ final class StockListViewModel: ObservableObject {
     @Published var searchText = ""
     @Published var isLoading = false
     @Published var sortOption: SortOption = .none
+    @Published var isInitialLoading = false
     
     private let useCase: StocksUseCase
+    private var pollingTask: Task<Void, Never>?   // 👈 important
     
     init(useCase: StocksUseCase) {
         self.useCase = useCase
@@ -37,14 +39,12 @@ final class StockListViewModel: ObservableObject {
         
         var result = stocks
         
-        // Apply search filter
         if !query.isEmpty {
-            result = result.filter { stock in
-                stock.name.localizedCaseInsensitiveContains(query)
+            result = result.filter {
+                $0.name.localizedCaseInsensitiveContains(query)
             }
         }
         
-        // Apply sorting by percentage change
         switch sortOption {
         case .percentAscending:
             result.sort { ($0.changePercentValue ?? 0) < ($1.changePercentValue ?? 0) }
@@ -57,9 +57,44 @@ final class StockListViewModel: ObservableObject {
         return result
     }
     
-    func loadMarketSummaries() async {
-        isLoading = true
-        defer { isLoading = false }
+    // MARK: - Polling
+    
+    func startPolling() {
+        stopPolling()
+        
+        pollingTask = Task {
+            await loadMarketSummaries(isInitial: true)
+            
+            while !Task.isCancelled {
+                let start = Date()
+                
+                await loadMarketSummaries(isInitial: false)
+                
+                let elapsed = Date().timeIntervalSince(start)
+                let delay = max(0, 8 - elapsed)
+                
+                try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
+            }
+        }
+    }
+    
+    func stopPolling() {
+        pollingTask?.cancel()
+        pollingTask = nil
+    }
+    
+    // MARK: - API
+    
+    func loadMarketSummaries(isInitial: Bool = false) async {
+        if isInitial {
+            isInitialLoading = true
+        }
+        
+        defer {
+            if isInitial {
+                isInitialLoading = false
+            }
+        }
         
         do {
             stocks = try await useCase.execute()

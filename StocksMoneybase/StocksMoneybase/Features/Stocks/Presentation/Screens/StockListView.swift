@@ -22,6 +22,7 @@ struct StockListView: View {
                 .buttonStyle(PlainButtonStyle())        // Removes default selection highlight
                 .listRowBackground(Color.clear)         // Removes list row background
             }
+            
             .listStyle(.plain)                          // Clean list style
             .navigationTitle("Market Summary")
             .searchable(
@@ -54,11 +55,15 @@ struct StockListView: View {
                 }
             }
             .task {
-                await viewModel.loadMarketSummaries()
+                viewModel.startPolling()
+            }
+            .onDisappear {
+                viewModel.stopPolling()
             }
             .refreshable {
                 await viewModel.loadMarketSummaries()
             }
         }
     }
+    
 }

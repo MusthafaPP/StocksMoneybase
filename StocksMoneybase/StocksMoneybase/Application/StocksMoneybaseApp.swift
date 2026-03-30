@@ -12,7 +12,8 @@ import SwiftData
 struct StocksMoneybaseApp: App {
     var body: some Scene {
         WindowGroup {
-            MarketSummaryDIContainer.makeMarketSummaryListView()
+            SplashView()
+//            MarketSummaryDIContainer.makeMarketSummaryListView()
         }
     }
 }
